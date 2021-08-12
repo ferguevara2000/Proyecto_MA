@@ -4,13 +4,41 @@
 
 <xs:element name="ListaActivosFuncionarioResponse" type="tns:ListaActivosFuncionarioResponse"/>
 
+<xs:element name="ListaValidaciones" type="tns:ListaValidaciones"/>
+
+<xs:element name="ListaValidacionesResponse" type="tns:ListaValidacionesResponse"/>
+
 <xs:element name="guardarValidacion" type="tns:guardarValidacion"/>
 
 <xs:element name="guardarValidacionResponse" type="tns:guardarValidacionResponse"/>
 
+<xs:element name="listaAdministradores" type="tns:listaAdministradores"/>
+
+<xs:element name="listaAdministradoresResponse" type="tns:listaAdministradoresResponse"/>
+
 <xs:element name="listaFuncionarios" type="tns:listaFuncionarios"/>
 
 <xs:element name="listaFuncionariosResponse" type="tns:listaFuncionariosResponse"/>
+
+<xs:element name="listaValidacion" type="tns:listaValidacion"/>
+
+<xs:element name="listaValidacionResponse" type="tns:listaValidacionResponse"/>
+
+<xs:complexType name="ListaValidaciones">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="ListaValidacionesResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:validacion" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="validacion">
+<xs:sequence>
+<xs:element name="nombre" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
 
 <xs:complexType name="listaFuncionarios">
 <xs:sequence/>
@@ -52,15 +80,48 @@
 
 <xs:complexType name="guardarValidacion">
 <xs:sequence>
-<xs:element name="cedula" type="xs:string" minOccurs="0"/>
 <xs:element name="nombre" type="xs:string" minOccurs="0"/>
-<xs:element name="estado" type="xs:string" minOccurs="0"/>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+<xs:element name="fecha" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="guardarValidacionResponse">
 <xs:sequence>
-<xs:element name="return" type="xs:int"/>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="listaValidacion">
+<xs:sequence>
+<xs:element name="val" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="listaValidacionResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:funcionario" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="listaAdministradores">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="listaAdministradoresResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:administrador" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="administrador">
+<xs:sequence>
+<xs:element name="apellido" type="xs:string" minOccurs="0"/>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+<xs:element name="contraseña" type="xs:string" minOccurs="0"/>
+<xs:element name="nombre" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 </xs:schema>

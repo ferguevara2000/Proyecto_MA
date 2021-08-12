@@ -4,17 +4,11 @@
 <xsd:import namespace="http://Servicios/" schemaLocation="http://localhost:8080/Servicio_MA/Servicio?xsd=1"/>
 </xsd:schema>
 </types>
-<message name="listaFuncionarios">
-<part name="parameters" element="tns:listaFuncionarios"/>
+<message name="ListaValidaciones">
+<part name="parameters" element="tns:ListaValidaciones"/>
 </message>
-<message name="listaFuncionariosResponse">
-<part name="parameters" element="tns:listaFuncionariosResponse"/>
-</message>
-<message name="ListaActivosFuncionario">
-<part name="parameters" element="tns:ListaActivosFuncionario"/>
-</message>
-<message name="ListaActivosFuncionarioResponse">
-<part name="parameters" element="tns:ListaActivosFuncionarioResponse"/>
+<message name="ListaValidacionesResponse">
+<part name="parameters" element="tns:ListaValidacionesResponse"/>
 </message>
 <message name="guardarValidacion">
 <part name="parameters" element="tns:guardarValidacion"/>
@@ -22,23 +16,68 @@
 <message name="guardarValidacionResponse">
 <part name="parameters" element="tns:guardarValidacionResponse"/>
 </message>
+<message name="ListaActivosFuncionario">
+<part name="parameters" element="tns:ListaActivosFuncionario"/>
+</message>
+<message name="ListaActivosFuncionarioResponse">
+<part name="parameters" element="tns:ListaActivosFuncionarioResponse"/>
+</message>
+<message name="listaAdministradores">
+<part name="parameters" element="tns:listaAdministradores"/>
+</message>
+<message name="listaAdministradoresResponse">
+<part name="parameters" element="tns:listaAdministradoresResponse"/>
+</message>
+<message name="listaFuncionarios">
+<part name="parameters" element="tns:listaFuncionarios"/>
+</message>
+<message name="listaFuncionariosResponse">
+<part name="parameters" element="tns:listaFuncionariosResponse"/>
+</message>
+<message name="listaValidacion">
+<part name="parameters" element="tns:listaValidacion"/>
+</message>
+<message name="listaValidacionResponse">
+<part name="parameters" element="tns:listaValidacionResponse"/>
+</message>
 <portType name="Servicio">
-<operation name="listaFuncionarios">
-<input wsam:Action="http://Servicios/Servicio/listaFuncionariosRequest" message="tns:listaFuncionarios"/>
-<output wsam:Action="http://Servicios/Servicio/listaFuncionariosResponse" message="tns:listaFuncionariosResponse"/>
-</operation>
-<operation name="ListaActivosFuncionario">
-<input wsam:Action="http://Servicios/Servicio/ListaActivosFuncionarioRequest" message="tns:ListaActivosFuncionario"/>
-<output wsam:Action="http://Servicios/Servicio/ListaActivosFuncionarioResponse" message="tns:ListaActivosFuncionarioResponse"/>
+<operation name="ListaValidaciones">
+<input wsam:Action="http://Servicios/Servicio/ListaValidacionesRequest" message="tns:ListaValidaciones"/>
+<output wsam:Action="http://Servicios/Servicio/ListaValidacionesResponse" message="tns:ListaValidacionesResponse"/>
 </operation>
 <operation name="guardarValidacion">
 <input wsam:Action="http://Servicios/Servicio/guardarValidacionRequest" message="tns:guardarValidacion"/>
 <output wsam:Action="http://Servicios/Servicio/guardarValidacionResponse" message="tns:guardarValidacionResponse"/>
 </operation>
+<operation name="ListaActivosFuncionario">
+<input wsam:Action="http://Servicios/Servicio/ListaActivosFuncionarioRequest" message="tns:ListaActivosFuncionario"/>
+<output wsam:Action="http://Servicios/Servicio/ListaActivosFuncionarioResponse" message="tns:ListaActivosFuncionarioResponse"/>
+</operation>
+<operation name="listaAdministradores">
+<input wsam:Action="http://Servicios/Servicio/listaAdministradoresRequest" message="tns:listaAdministradores"/>
+<output wsam:Action="http://Servicios/Servicio/listaAdministradoresResponse" message="tns:listaAdministradoresResponse"/>
+</operation>
+<operation name="listaFuncionarios">
+<input wsam:Action="http://Servicios/Servicio/listaFuncionariosRequest" message="tns:listaFuncionarios"/>
+<output wsam:Action="http://Servicios/Servicio/listaFuncionariosResponse" message="tns:listaFuncionariosResponse"/>
+</operation>
+<operation name="listaValidacion">
+<input wsam:Action="http://Servicios/Servicio/listaValidacionRequest" message="tns:listaValidacion"/>
+<output wsam:Action="http://Servicios/Servicio/listaValidacionResponse" message="tns:listaValidacionResponse"/>
+</operation>
 </portType>
 <binding name="ServicioPortBinding" type="tns:Servicio">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-<operation name="listaFuncionarios">
+<operation name="ListaValidaciones">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="guardarValidacion">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -56,7 +95,25 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="guardarValidacion">
+<operation name="listaAdministradores">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="listaFuncionarios">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="listaValidacion">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

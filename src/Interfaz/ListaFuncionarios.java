@@ -6,12 +6,9 @@ import WS.Servicio;
 import WS.Servicio_Service;
 import java.util.List;
 import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
 public class ListaFuncionarios extends javax.swing.JFrame {
 
@@ -23,15 +20,15 @@ public class ListaFuncionarios extends javax.swing.JFrame {
     public ListaFuncionarios() {
         initComponents();
         servicio = ws.getServicioPort();
-        cargarTabla();
         setLocationRelativeTo(null);
+        cargarTabla();
         eventoTabla();
     }
 
     private void cargarTabla() {
         DefaultTableModel modelo = new DefaultTableModel();
         try {
-            String[] titulos = {"ID", "Usuario", "Seleccionar"};
+            String[] titulos = {"ID", "Usuario", "N° Activos"};
             modelo = new DefaultTableModel(null, titulos);
             String[] registros = new String[3];
             int tamañoLista = servicio.listaFuncionarios().size();
@@ -40,26 +37,15 @@ public class ListaFuncionarios extends javax.swing.JFrame {
 
                 registros[0] = lista.get(i).getCi();
                 registros[1] = lista.get(i).getNombre() + " " + lista.get(i).getApellido();
-                //registros[2] = String.valueOf(lista.get(i).getNumActivos());
+                registros[2] = String.valueOf(lista.get(i).getNumActivos());
 
                 modelo.addRow(registros);
             }
 
             jTblDatos.setModel(modelo);
-            agregarCheckBox(2, jTblDatos);
         } catch (Exception e) {
             System.err.println(e);
         }
-    }
-
-    private void agregarCheckBox(int column, JTable table) {
-        TableColumn tc = table.getColumnModel().getColumn(column);
-        tc.setCellEditor(table.getDefaultEditor(Boolean.class));
-        tc.setCellRenderer(table.getDefaultRenderer(Boolean.class));
-    }
-
-    public boolean estaSeleccionado(int fila, int columna, JTable table) {
-        return table.getValueAt(fila, columna) != null;
     }
 
     private void eventoTabla() {
@@ -100,7 +86,7 @@ public class ListaFuncionarios extends javax.swing.JFrame {
         setTitle("FUNCIONARIOS Y SUS ACTIVOS");
         setResizable(false);
 
-        jButton1.setText("SIGUIENTE");
+        jButton1.setText("VOLVER AL MENU");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -177,23 +163,9 @@ public class ListaFuncionarios extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (jTblDatos.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "No existen datos para relizar la validacion");
-
-        } else {
-            for (int i = 0; i < jTblDatos.getRowCount(); i++) {
-                if (estaSeleccionado(i, 2, jTblDatos)) {
-                    seleccion++;
-                }
-            }
-            if (seleccion > 0) {
-                VentanaValidacion v = new VentanaValidacion(jTblDatos);
-                v.setVisible(true);
-            } else {
-                JOptionPane.showMessageDialog(this, "No se selecciono ningun dato");
-            }
-
-        }
+        Menu menu = new Menu();
+        menu.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

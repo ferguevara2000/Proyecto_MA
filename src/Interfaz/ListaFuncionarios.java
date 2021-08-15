@@ -4,6 +4,7 @@ import WS.Activos;
 import WS.Funcionario;
 import WS.Servicio;
 import WS.Servicio_Service;
+import WS.Validacion;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.event.ListSelectionEvent;
@@ -28,17 +29,15 @@ public class ListaFuncionarios extends javax.swing.JFrame {
     private void cargarTabla() {
         DefaultTableModel modelo = new DefaultTableModel();
         try {
-            String[] titulos = {"ID", "Usuario", "N° Activos"};
+            String[] titulos = {"ID", "Usuario"};
             modelo = new DefaultTableModel(null, titulos);
-            String[] registros = new String[3];
+            String[] registros = new String[2];
             int tamañoLista = servicio.listaFuncionarios().size();
             List<Funcionario> lista = servicio.listaFuncionarios();
             for (int i = 0; i < tamañoLista; i++) {
 
                 registros[0] = lista.get(i).getCi();
                 registros[1] = lista.get(i).getNombre() + " " + lista.get(i).getApellido();
-                registros[2] = String.valueOf(lista.get(i).getNumActivos());
-
                 modelo.addRow(registros);
             }
 
@@ -52,21 +51,65 @@ public class ListaFuncionarios extends javax.swing.JFrame {
         jTblDatos.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent lse) {
-                DefaultListModel modelo = new DefaultListModel();
+                DefaultListModel modeloAct = new DefaultListModel();
+                DefaultListModel modeloVal = new DefaultListModel();
                 int fila = jTblDatos.getSelectedRow();
                 String DatoSeleccionado = jTblDatos.getValueAt(fila, 0).toString();
                 int tamañoLista = servicio.listaActivosFuncionario(DatoSeleccionado).size();
                 List<Activos> lista = servicio.listaActivosFuncionario(DatoSeleccionado);
+                int tamañoListaVal = servicio.listaValFuncionario(DatoSeleccionado).size();
+                List<Validacion> listaVal = servicio.listaValFuncionario(DatoSeleccionado);
                 try {
                     for (int i = 0; i < tamañoLista; i++) {
-                        modelo.addElement(lista.get(i).getNombre());
-                        jLstActivos.setModel(modelo);
+                        modeloAct.addElement(lista.get(i).getNombre());
+                        jLstActivos.setModel(modeloAct);
                     }
+
+                    for (int i = 0; i < tamañoListaVal; i++) {
+                        modeloVal.addElement(listaVal.get(i).getNombre());
+                        jLstValidacion.setModel(modeloVal);
+                    }
+
                 } catch (Exception e) {
                     System.err.println(e);
                 }
             }
         });
+    }
+
+    private int numActivos(String cedula) {
+        int n = 0;
+        try {
+            int fila = jTblDatos.getSelectedRow();
+            String DatoSeleccionado = jTblDatos.getValueAt(fila, 0).toString();
+            n = servicio.obtenerNumActivos(cedula);
+            return n;
+        } catch (Exception e) {
+            System.err.println(e);
+            return n;
+        }
+    }
+
+    private void busqueda() {
+        DefaultTableModel modelo = new DefaultTableModel();
+        try {
+            String[] titulos = {"ID", "Usuario"};
+            modelo = new DefaultTableModel(null, titulos);
+            String dato = jTxtBusqueda.getText();
+            String[] registros = new String[2];
+            int tamañoLista = servicio.busquedaFuncionarios(dato).size();
+            List<Funcionario> lista = servicio.busquedaFuncionarios(dato);
+            for (int i = 0; i < tamañoLista; i++) {
+
+                registros[0] = lista.get(i).getCi();
+                registros[1] = lista.get(i).getNombre() + " " + lista.get(i).getApellido();
+                modelo.addRow(registros);
+            }
+
+            jTblDatos.setModel(modelo);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -78,9 +121,14 @@ public class ListaFuncionarios extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTblDatos = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jLstActivos = new javax.swing.JList<>();
+        jLstValidacion = new javax.swing.JList<>();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jLstActivos = new javax.swing.JList<>();
+        jLabel4 = new javax.swing.JLabel();
+        jTxtBusqueda = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("FUNCIONARIOS Y SUS ACTIVOS");
@@ -103,7 +151,7 @@ public class ListaFuncionarios extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(jTblDatos);
 
-        jScrollPane3.setViewportView(jLstActivos);
+        jScrollPane3.setViewportView(jLstValidacion);
 
         jLabel1.setBackground(new java.awt.Color(204, 204, 255));
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -114,7 +162,22 @@ public class ListaFuncionarios extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("LISTA DE FUNCIONARIO Y SUS ACTIVOS");
-        jLabel2.setBorder(javax.swing.BorderFactory.createMatteBorder(3, 3, 3, 3, new java.awt.Color(0, 0, 0)));
+
+        jLabel3.setBackground(new java.awt.Color(204, 204, 255));
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Validaciones");
+        jLabel3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        jScrollPane4.setViewportView(jLstActivos);
+
+        jLabel4.setText("Buscar");
+
+        jTxtBusqueda.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTxtBusquedaKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -122,30 +185,50 @@ public class ListaFuncionarios extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(18, 18, 18)
+                                .addComponent(jTxtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 21, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(14, 14, 14)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jLabel2))
+                .addComponent(jLabel2)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jTxtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(5, 5, 5)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane4)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -167,6 +250,10 @@ public class ListaFuncionarios extends javax.swing.JFrame {
         menu.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTxtBusquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtBusquedaKeyReleased
+        busqueda();
+    }//GEN-LAST:event_jTxtBusquedaKeyReleased
 
     /**
      * @param args the command line arguments
@@ -222,10 +309,15 @@ public class ListaFuncionarios extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     public javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    public javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     public javax.swing.JList<String> jLstActivos;
+    public javax.swing.JList<String> jLstValidacion;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     public javax.swing.JTable jTblDatos;
+    private javax.swing.JTextField jTxtBusqueda;
     // End of variables declaration//GEN-END:variables
 }

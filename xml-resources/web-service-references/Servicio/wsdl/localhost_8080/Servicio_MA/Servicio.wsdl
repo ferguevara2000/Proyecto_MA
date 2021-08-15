@@ -4,23 +4,11 @@
 <xsd:import namespace="http://Servicios/" schemaLocation="http://localhost:8080/Servicio_MA/Servicio?xsd=1"/>
 </xsd:schema>
 </types>
-<message name="busquedaFuncionarios">
-<part name="parameters" element="tns:busquedaFuncionarios"/>
+<message name="listaValidacion">
+<part name="parameters" element="tns:listaValidacion"/>
 </message>
-<message name="busquedaFuncionariosResponse">
-<part name="parameters" element="tns:busquedaFuncionariosResponse"/>
-</message>
-<message name="listaAdministradores">
-<part name="parameters" element="tns:listaAdministradores"/>
-</message>
-<message name="listaAdministradoresResponse">
-<part name="parameters" element="tns:listaAdministradoresResponse"/>
-</message>
-<message name="ListaActivosFuncionario">
-<part name="parameters" element="tns:ListaActivosFuncionario"/>
-</message>
-<message name="ListaActivosFuncionarioResponse">
-<part name="parameters" element="tns:ListaActivosFuncionarioResponse"/>
+<message name="listaValidacionResponse">
+<part name="parameters" element="tns:listaValidacionResponse"/>
 </message>
 <message name="obtenerNumActivos">
 <part name="parameters" element="tns:obtenerNumActivos"/>
@@ -28,17 +16,17 @@
 <message name="obtenerNumActivosResponse">
 <part name="parameters" element="tns:obtenerNumActivosResponse"/>
 </message>
-<message name="listaFuncionarios">
-<part name="parameters" element="tns:listaFuncionarios"/>
+<message name="listaValFuncionario">
+<part name="parameters" element="tns:listaValFuncionario"/>
 </message>
-<message name="listaFuncionariosResponse">
-<part name="parameters" element="tns:listaFuncionariosResponse"/>
+<message name="listaValFuncionarioResponse">
+<part name="parameters" element="tns:listaValFuncionarioResponse"/>
 </message>
-<message name="guardarValidacion">
-<part name="parameters" element="tns:guardarValidacion"/>
+<message name="busquedaFuncionarios">
+<part name="parameters" element="tns:busquedaFuncionarios"/>
 </message>
-<message name="guardarValidacionResponse">
-<part name="parameters" element="tns:guardarValidacionResponse"/>
+<message name="busquedaFuncionariosResponse">
+<part name="parameters" element="tns:busquedaFuncionariosResponse"/>
 </message>
 <message name="ListaValidaciones">
 <part name="parameters" element="tns:ListaValidaciones"/>
@@ -46,17 +34,29 @@
 <message name="ListaValidacionesResponse">
 <part name="parameters" element="tns:ListaValidacionesResponse"/>
 </message>
-<message name="listaValFuncionario">
-<part name="parameters" element="tns:listaValFuncionario"/>
+<message name="listaFuncionarios">
+<part name="parameters" element="tns:listaFuncionarios"/>
 </message>
-<message name="listaValFuncionarioResponse">
-<part name="parameters" element="tns:listaValFuncionarioResponse"/>
+<message name="listaFuncionariosResponse">
+<part name="parameters" element="tns:listaFuncionariosResponse"/>
 </message>
-<message name="listaValidacion">
-<part name="parameters" element="tns:listaValidacion"/>
+<message name="ListaActivosFuncionario">
+<part name="parameters" element="tns:ListaActivosFuncionario"/>
 </message>
-<message name="listaValidacionResponse">
-<part name="parameters" element="tns:listaValidacionResponse"/>
+<message name="ListaActivosFuncionarioResponse">
+<part name="parameters" element="tns:ListaActivosFuncionarioResponse"/>
+</message>
+<message name="listaAdministradores">
+<part name="parameters" element="tns:listaAdministradores"/>
+</message>
+<message name="listaAdministradoresResponse">
+<part name="parameters" element="tns:listaAdministradoresResponse"/>
+</message>
+<message name="guardarValidacion">
+<part name="parameters" element="tns:guardarValidacion"/>
+</message>
+<message name="guardarValidacionResponse">
+<part name="parameters" element="tns:guardarValidacionResponse"/>
 </message>
 <message name="eliminarValidacion">
 <part name="parameters" element="tns:eliminarValidacion"/>
@@ -65,41 +65,41 @@
 <part name="parameters" element="tns:eliminarValidacionResponse"/>
 </message>
 <portType name="Servicio">
-<operation name="busquedaFuncionarios">
-<input wsam:Action="http://Servicios/Servicio/busquedaFuncionariosRequest" message="tns:busquedaFuncionarios"/>
-<output wsam:Action="http://Servicios/Servicio/busquedaFuncionariosResponse" message="tns:busquedaFuncionariosResponse"/>
-</operation>
-<operation name="listaAdministradores">
-<input wsam:Action="http://Servicios/Servicio/listaAdministradoresRequest" message="tns:listaAdministradores"/>
-<output wsam:Action="http://Servicios/Servicio/listaAdministradoresResponse" message="tns:listaAdministradoresResponse"/>
-</operation>
-<operation name="ListaActivosFuncionario">
-<input wsam:Action="http://Servicios/Servicio/ListaActivosFuncionarioRequest" message="tns:ListaActivosFuncionario"/>
-<output wsam:Action="http://Servicios/Servicio/ListaActivosFuncionarioResponse" message="tns:ListaActivosFuncionarioResponse"/>
+<operation name="listaValidacion">
+<input wsam:Action="http://Servicios/Servicio/listaValidacionRequest" message="tns:listaValidacion"/>
+<output wsam:Action="http://Servicios/Servicio/listaValidacionResponse" message="tns:listaValidacionResponse"/>
 </operation>
 <operation name="obtenerNumActivos">
 <input wsam:Action="http://Servicios/Servicio/obtenerNumActivosRequest" message="tns:obtenerNumActivos"/>
 <output wsam:Action="http://Servicios/Servicio/obtenerNumActivosResponse" message="tns:obtenerNumActivosResponse"/>
 </operation>
-<operation name="listaFuncionarios">
-<input wsam:Action="http://Servicios/Servicio/listaFuncionariosRequest" message="tns:listaFuncionarios"/>
-<output wsam:Action="http://Servicios/Servicio/listaFuncionariosResponse" message="tns:listaFuncionariosResponse"/>
+<operation name="listaValFuncionario">
+<input wsam:Action="http://Servicios/Servicio/listaValFuncionarioRequest" message="tns:listaValFuncionario"/>
+<output wsam:Action="http://Servicios/Servicio/listaValFuncionarioResponse" message="tns:listaValFuncionarioResponse"/>
 </operation>
-<operation name="guardarValidacion">
-<input wsam:Action="http://Servicios/Servicio/guardarValidacionRequest" message="tns:guardarValidacion"/>
-<output wsam:Action="http://Servicios/Servicio/guardarValidacionResponse" message="tns:guardarValidacionResponse"/>
+<operation name="busquedaFuncionarios">
+<input wsam:Action="http://Servicios/Servicio/busquedaFuncionariosRequest" message="tns:busquedaFuncionarios"/>
+<output wsam:Action="http://Servicios/Servicio/busquedaFuncionariosResponse" message="tns:busquedaFuncionariosResponse"/>
 </operation>
 <operation name="ListaValidaciones">
 <input wsam:Action="http://Servicios/Servicio/ListaValidacionesRequest" message="tns:ListaValidaciones"/>
 <output wsam:Action="http://Servicios/Servicio/ListaValidacionesResponse" message="tns:ListaValidacionesResponse"/>
 </operation>
-<operation name="listaValFuncionario">
-<input wsam:Action="http://Servicios/Servicio/listaValFuncionarioRequest" message="tns:listaValFuncionario"/>
-<output wsam:Action="http://Servicios/Servicio/listaValFuncionarioResponse" message="tns:listaValFuncionarioResponse"/>
+<operation name="listaFuncionarios">
+<input wsam:Action="http://Servicios/Servicio/listaFuncionariosRequest" message="tns:listaFuncionarios"/>
+<output wsam:Action="http://Servicios/Servicio/listaFuncionariosResponse" message="tns:listaFuncionariosResponse"/>
 </operation>
-<operation name="listaValidacion">
-<input wsam:Action="http://Servicios/Servicio/listaValidacionRequest" message="tns:listaValidacion"/>
-<output wsam:Action="http://Servicios/Servicio/listaValidacionResponse" message="tns:listaValidacionResponse"/>
+<operation name="ListaActivosFuncionario">
+<input wsam:Action="http://Servicios/Servicio/ListaActivosFuncionarioRequest" message="tns:ListaActivosFuncionario"/>
+<output wsam:Action="http://Servicios/Servicio/ListaActivosFuncionarioResponse" message="tns:ListaActivosFuncionarioResponse"/>
+</operation>
+<operation name="listaAdministradores">
+<input wsam:Action="http://Servicios/Servicio/listaAdministradoresRequest" message="tns:listaAdministradores"/>
+<output wsam:Action="http://Servicios/Servicio/listaAdministradoresResponse" message="tns:listaAdministradoresResponse"/>
+</operation>
+<operation name="guardarValidacion">
+<input wsam:Action="http://Servicios/Servicio/guardarValidacionRequest" message="tns:guardarValidacion"/>
+<output wsam:Action="http://Servicios/Servicio/guardarValidacionResponse" message="tns:guardarValidacionResponse"/>
 </operation>
 <operation name="eliminarValidacion">
 <input wsam:Action="http://Servicios/Servicio/eliminarValidacionRequest" message="tns:eliminarValidacion"/>
@@ -108,25 +108,7 @@
 </portType>
 <binding name="ServicioPortBinding" type="tns:Servicio">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-<operation name="busquedaFuncionarios">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="listaAdministradores">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="ListaActivosFuncionario">
+<operation name="listaValidacion">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -144,7 +126,7 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="listaFuncionarios">
+<operation name="listaValFuncionario">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -153,7 +135,7 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="guardarValidacion">
+<operation name="busquedaFuncionarios">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -171,7 +153,7 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="listaValFuncionario">
+<operation name="listaFuncionarios">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -180,7 +162,25 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="listaValidacion">
+<operation name="ListaActivosFuncionario">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="listaAdministradores">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="guardarValidacion">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

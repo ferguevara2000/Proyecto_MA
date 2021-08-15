@@ -72,6 +72,7 @@
 <xs:sequence>
 <xs:element name="apellido" type="xs:string" minOccurs="0"/>
 <xs:element name="ci" type="xs:string" minOccurs="0"/>
+<xs:element name="estado" type="xs:string" minOccurs="0"/>
 <xs:element name="nombre" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
@@ -89,16 +90,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="listaFuncionarios">
-<xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="listaFuncionariosResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:funcionario" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="listaValFuncionario">
 <xs:sequence>
 <xs:element name="cedula" type="xs:string" minOccurs="0"/>
@@ -108,6 +99,16 @@
 <xs:complexType name="listaValFuncionarioResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:validacion" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="listaFuncionarios">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="listaFuncionariosResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:funcionario" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -144,18 +145,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="obtenerNumActivos">
-<xs:sequence>
-<xs:element name="cedula" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="obtenerNumActivosResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:int"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="listaValidacion">
 <xs:sequence>
 <xs:element name="val" type="xs:string" minOccurs="0"/>
@@ -165,6 +154,18 @@
 <xs:complexType name="listaValidacionResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:funcionario" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="obtenerNumActivos">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="obtenerNumActivosResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:int"/>
 </xs:sequence>
 </xs:complexType>
 

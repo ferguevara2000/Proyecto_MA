@@ -1,16 +1,12 @@
 package Interfaz;
 
-import WS.Activos;
+import WS.Funcionario;
 import WS.Servicio;
 import WS.Servicio_Service;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -21,122 +17,91 @@ public class VentanaValidacion extends javax.swing.JFrame {
 
     Servicio_Service ws = new Servicio_Service();
     Servicio servicio;
-    DefaultListModel modelo = new DefaultListModel();
-    JTable tabla;
+    DefaultTableModel modelo = new DefaultTableModel();
+    DefaultListModel modeloLista = new DefaultListModel();
 
-    public VentanaValidacion(JTable tabla) {
+    public VentanaValidacion() {
         initComponents();
         servicio = ws.getServicioPort();
-        this.tabla = tabla;
+        cargarTablaFuncionarios();
+        tablaValidacion();
         setLocationRelativeTo(null);
-        tiempo();
-        cargarTabla();
-        cargarDatos();
     }
 
-    private void tiempo() {
-        Calendar fecha = new GregorianCalendar();
-        String anno = Integer.toString(fecha.get(Calendar.YEAR));
-        String mes = Integer.toString(fecha.get(Calendar.MONTH));
-        String dia = Integer.toString(fecha.get(Calendar.DATE));
-
-        String fechacompleta = anno + "/" + mes + "/" + dia;
-        jLbFecha.setText("Fecha: " + fechacompleta);
-    }
-
-    private void cargarTabla() {
+    private void cargarTablaFuncionarios() {
         try {
-            String[] titulo = {"ID", "Usuario"};
-            DefaultTableModel modelo = new DefaultTableModel(null, titulo);
-            String[] datos = new String[3];
-            for (int i = 0; i < tabla.getRowCount(); i++) {
-                if (estaSeleccionado(i, 2, tabla)) {
-                    datos[0] = tabla.getValueAt(i, 0).toString();
-                    datos[1] = tabla.getValueAt(i, 1).toString();
-                    modelo.addRow(datos);
-                }
-            }
-            jTblValidacion.setModel(modelo);
-        } catch (Exception e) {
-            System.err.println(e);
-        }
-
-    }
-
-    private boolean estaSeleccionado(int fila, int columna, JTable table) {
-        return table.getValueAt(fila, columna) != null;
-    }
-
-    private void cargarList() {
-        modelo = new DefaultListModel();
-        int fila = jTblValidacion.getSelectedRow();
-        String DatoSeleccionado = jTblValidacion.getValueAt(fila, 0).toString();
-        int tamañoLista = servicio.listaActivosFuncionario(DatoSeleccionado).size();
-        List<Activos> lista = servicio.listaActivosFuncionario(DatoSeleccionado);
-        try {
+            String[] titulos = {"ID", "Usuario"};
+            modelo = new DefaultTableModel(null, titulos);
+            String[] registros = new String[3];
+            int tamañoLista = servicio.listaFuncionarios().size();
+            List<Funcionario> lista = servicio.listaFuncionarios();
             for (int i = 0; i < tamañoLista; i++) {
-                modelo.addElement(lista.get(i).getNombre());
-                jLstActivos.setModel(modelo);
+
+                registros[0] = lista.get(i).getCi();
+                registros[1] = lista.get(i).getNombre() + " " + lista.get(i).getApellido();
+
+                modelo.addRow(registros);
             }
 
+            jTblFuncionarios.setModel(modelo);
         } catch (Exception e) {
             System.err.println(e);
         }
     }
 
-    private void cargarDatos() {
-        jTblValidacion.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent lse) {
-                if (jTblValidacion.getSelectedRow() != -1) {
-                    int fila = jTblValidacion.getSelectedRow();
-                    jTxtId.setText(jTblValidacion.getValueAt(fila, 0).toString());
-                    jTxtNombre.setText(jTblValidacion.getValueAt(fila, 1).toString());
-                    jTxtId.setEditable(false);
-                    jTxtNombre.setEditable(false);
-                    cargarList();
+    private void pasarDatos() {
+        int fila = jTblFuncionarios.getSelectedRow();
+        boolean existe = true;
+        if (fila >= 0) {
+            String[] datos = new String[2];
+            datos[0] = jTblFuncionarios.getValueAt(fila, 0).toString();
+            datos[1] = jTblFuncionarios.getValueAt(fila, 1).toString();
+
+            for (int i = 0; i < jTblValidacion.getRowCount(); i++) {
+                String dato1 = jTblFuncionarios.getValueAt(fila, 0).toString();
+                String dato2 = jTblValidacion.getValueAt(i, 0).toString();
+                if (dato2.equals(dato1)) {
+                    existe = false;
                 }
             }
-        });
+            if (existe) {
+                modelo.addRow(datos);
+                jTblValidacion.setModel(modelo);
+            } else {
+                JOptionPane.showMessageDialog(this, "El Funcionario ya existe");
+            }
+        }
     }
 
-    private void guardar() {
-        if (jTxtId.getText().isEmpty() || jTxtNombre.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No se puede realizar esta accion");
+    private void tablaValidacion() {
+        String[] titulos = {"ID", "Usuario"};
+        modelo = new DefaultTableModel(null, titulos);
+        jTblValidacion.setModel(modelo);
+    }
+
+    private void guardarValidacion() {
+        String nomVal, cedula, date;
+        String n = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        if (jTblValidacion.getRowCount() > 0) {
+
+            for (int i = 0; i < jTblValidacion.getRowCount(); i++) {
+                try {
+                    nomVal = jTxtNomValidacion.getText();
+                    cedula = jTblValidacion.getValueAt(i, 0).toString();
+                    date = sdf.format(jDateChooser1.getDate());
+                    n = servicio.guardarValidacion(nomVal, cedula, date);
+                } catch (Exception e) {
+                    System.err.println(e);
+                }
+            }
+            if (n.equals("Insertado")) {
+                JOptionPane.showMessageDialog(this, "Validacion guardada correctamente");
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al guardar la validación");
+            }
         } else {
-            int fila = jTblValidacion.getSelectedRow();
-            String cedula = jTxtId.getText();
-            String nombre = jTxtNombre.getText();
-            String estado = (String) jComboBox1.getSelectedItem();
-            try {
-                int n = servicio.guardarValidacion(cedula, nombre, estado);
-                if (n > 0) {
-                    JOptionPane.showMessageDialog(this, "Validacion guardada correctamente");
-                    eliminarFila();
-                    jTxtId.setText(null);
-                    jTxtNombre.setText(null);
-                    jComboBox1.setSelectedIndex(0);
-                    modelo.removeAllElements();
-                    jLstActivos.setModel(modelo);
-                } else {
-                    JOptionPane.showMessageDialog(this, "No se pudo guardar la validacion");
-                }
-            } catch (Exception e) {
-                System.err.println(e);
-            }
-        }
-    }
-
-    private void eliminarFila() {
-        if (jTblValidacion.getSelectedRow() != -1) {
-            int fila = jTblValidacion.getSelectedRow();
-            ((DefaultTableModel) jTblValidacion.getModel()).removeRow(fila);
-        }
-    }
-
-    private void validarDatos() {
-        if (jTxtId.getText().isEmpty() || jTxtNombre.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No se puede realizar esta accion");
+            JOptionPane.showMessageDialog(this, "Tabla vacia");
         }
     }
 
@@ -148,26 +113,103 @@ public class VentanaValidacion extends javax.swing.JFrame {
         jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTblValidacion = new javax.swing.JTable();
-        jLbFecha = new javax.swing.JLabel();
-        jBntGRevision = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jTxtNombre = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jTxtId = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jLstActivos = new javax.swing.JList<>();
-        jLabel6 = new javax.swing.JLabel();
-        jBtnVolver = new javax.swing.JButton();
+        jTblFuncionarios = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
+        jBtnAgregar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jTxtNomValidacion = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        jBtnGuardar = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTblValidacion = new javax.swing.JTable();
 
         jCheckBoxMenuItem1.setSelected(true);
         jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jTblFuncionarios.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTblFuncionarios);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE))
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jBtnAgregar.setText("Agregar");
+        jBtnAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnAgregarActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Volver al menu");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addComponent(jBtnAgregar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jBtnAgregar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jLabel1.setText("Nombre de la Validación");
+
+        jLabel2.setText("Fecha de la Validación");
+
+        jDateChooser1.setDateFormatString("yyyy-MM-dd");
+
+        jBtnGuardar.setText("Guardar");
+        jBtnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnGuardarActionPerformed(evt);
+            }
+        });
 
         jTblValidacion.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -180,144 +222,87 @@ public class VentanaValidacion extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTblValidacion);
+        jScrollPane2.setViewportView(jTblValidacion);
 
-        jLbFecha.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jLbFecha.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-
-        jBntGRevision.setText("Guardar Revision");
-        jBntGRevision.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBntGRevisionActionPerformed(evt);
-            }
-        });
-
-        jLabel2.setText("DATOS DE VALIDACION");
-
-        jLabel3.setText("Nombre Funcionario");
-
-        jLabel4.setText("ID Funcionario");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ok", "Revision" }));
-
-        jLabel5.setText("Estado");
-
-        jScrollPane3.setViewportView(jLstActivos);
-
-        jLabel6.setBackground(new java.awt.Color(204, 204, 255));
-        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setText("Activos");
-        jLabel6.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        jBtnVolver.setText("Volver");
-        jBtnVolver.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnVolverActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLbFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jBtnVolver)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jBntGRevision, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel5))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jTxtNombre)
-                                        .addComponent(jTxtId, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE))
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(18, 18, 18))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jLbFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addComponent(jLabel2)
-                .addGap(3, 3, 3)
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jTxtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jTxtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5)))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jBntGRevision)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jBtnVolver))))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBtnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jTxtNomValidacion, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2))
+                .addContainerGap())
         );
-
-        jLabel1.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("CREAR UN PROCESO DE VALIDACION");
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jTxtNomValidacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jBtnGuardar))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jBntGRevisionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBntGRevisionActionPerformed
-        //validarDatos();
-        guardar();
-    }//GEN-LAST:event_jBntGRevisionActionPerformed
+    private void jBtnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAgregarActionPerformed
+        pasarDatos();
+    }//GEN-LAST:event_jBtnAgregarActionPerformed
 
-    private void jBtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnVolverActionPerformed
-        ListaFuncionarios v = new ListaFuncionarios();
-        v.setVisible(true);
+    private void jBtnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnGuardarActionPerformed
+        guardarValidacion();
+    }//GEN-LAST:event_jBtnGuardarActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Menu menu = new Menu();
+        menu.setVisible(true);
         this.dispose();
-    }//GEN-LAST:event_jBtnVolverActionPerformed
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -364,30 +349,27 @@ public class VentanaValidacion extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VentanaValidacion(null).setVisible(true);
+                new VentanaValidacion().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JButton jBntGRevision;
-    private javax.swing.JButton jBtnVolver;
+    private javax.swing.JButton jBtnAgregar;
+    private javax.swing.JButton jBtnGuardar;
+    private javax.swing.JButton jButton1;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLbFecha;
-    private javax.swing.JList<String> jLstActivos;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTblFuncionarios;
     private javax.swing.JTable jTblValidacion;
-    private javax.swing.JTextField jTxtId;
-    private javax.swing.JTextField jTxtNombre;
+    private javax.swing.JTextField jTxtNomValidacion;
     // End of variables declaration//GEN-END:variables
 }

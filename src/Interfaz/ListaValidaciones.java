@@ -22,7 +22,7 @@ public class ListaValidaciones extends javax.swing.JFrame {
     }
     
     private void cargarTabla(){
-        String[] titulos = {"Cedula","Nombre"};
+        String[] titulos = {"Cedula","Nombre","Estado"};
         DefaultTableModel modelo = new DefaultTableModel(null, titulos);
         String[] registros = new String[3];
         String val = (String) jComboBox1.getSelectedItem();
@@ -32,6 +32,7 @@ public class ListaValidaciones extends javax.swing.JFrame {
         for (int i = 0; i < tamañoLista; i++) {
             registros[0] = lista.get(i).getCi();
             registros[1] = lista.get(i).getNombre() + " " + lista.get(i).getApellido();
+            registros[2] = lista.get(i).getEstado();
             
             modelo.addRow(registros);
         }
@@ -40,7 +41,7 @@ public class ListaValidaciones extends javax.swing.JFrame {
     }
 
     private void modeloTabla() {
-        String[] titulos = {"Cedula","Nombre"};
+        String[] titulos = {"Cedula","Nombre","Estado"};
         DefaultTableModel modelo = new DefaultTableModel(null, titulos);
         String[] registros = new String[3];
         String val = (String) jComboBox1.getSelectedItem();
@@ -50,6 +51,7 @@ public class ListaValidaciones extends javax.swing.JFrame {
         for (int i = 0; i < tamañoLista; i++) {
             registros[0] = lista.get(i).getCi();
             registros[1] = lista.get(i).getNombre() + " " + lista.get(i).getApellido();
+            registros[2] = lista.get(i).getEstado();
             
             modelo.addRow(registros);
         }
